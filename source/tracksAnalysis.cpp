@@ -1,4 +1,5 @@
-#include "myHead.h"
+#include "myHeader.h"
+#include "DmpStkEventMetadata.h"
 
 void getTracks(const std::string inputFilePath)
 {
@@ -14,18 +15,18 @@ void getTracks(const std::string inputFilePath)
     TTree* dataTree = (TTree*) dataFile.Get("CollectionTree");
 
     // Register STK collections
-    TClonesArray stkclusters("DmpStkSiCluster");
-    DmpStkEventMetadata stkMetadata();
-    TClonesArray stkladderadc("DmpStkLadderAdc");
-    
-    dataTree.SetBranchAddress("StkClusterCollection",&stkclusters);
-    dataTree.SetBranchAddress("DmpStkLadderAdcCollection", &stkladderadc);
-    dataTree.SetBranchAddress("DmpStkEventMetadata", &stkMetadata);
+    TClonesArray* stkclusters = new TClonesArray("DmpStkSiCluster");
+    DmpStkEventMetadata* stkMetadata = new DmpStkEventMetadata();
+    TClonesArray* stkladderadc = new TClonesArray("DmpStkLadderAdc");
+   
+   dataTree->SetBranchAddress("StkClusterCollection",&stkclusters);
+   dataTree->SetBranchAddress("DmpStkEventMetadata", &stkMetadata);
+   dataTree->SetBranchAddress("DmpStkLadderAdcCollection", &stkladderadc);
 
     // Check if STK tracks collection exists 
     bool fStkKalmanTracksFound = false;
-    for(int i=0; i<dataTree.GetListOfBranches()->GetEntries(); ++i)
-        if(std::string(dataTree.GetListOfBranches()->At(i)->GetName()) == std::string("StkKalmanTracks"))
+    for(int i=0; i<dataTree->GetListOfBranches()->GetEntries(); ++i)
+        if(std::string(dataTree->GetListOfBranches()->At(i)->GetName()) == std::string("StkKalmanTracks"))
         {
             fStkKalmanTracksFound = true;
             break;

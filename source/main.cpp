@@ -10,12 +10,12 @@ int main(int argc,char* argv[])
         exit(100);
     }
     else
-        exmlpName = argv[2];
+        exmplName = argv[2];
 
-    if(strcmp(exmlpName,"getTracks"))
+    if(strcmp(exmplName.c_str(),"getTracks"))
         getTracks(argv[1]);
-    
-           
+
+
 
     return 0;
 
