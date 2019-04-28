@@ -15,7 +15,7 @@ endif
 #dependencie
 
 DIPS_INCLUDE = $(shell root-config --cflags)
-DIPS_LIBS = $(shell root-config --ldflags) $(shell root-config --libs)
+DIPS_LIBS = $(shell root-config --ldflags) $(shell root-config --libs) -lTreePlayer
 
 DAMPE_INCLUDE="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/include"
 DAMPE_LIB="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/"
