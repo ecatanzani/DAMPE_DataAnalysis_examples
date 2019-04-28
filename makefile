@@ -17,8 +17,8 @@ endif
 DIPS_INCLUDE = $(shell root-config --cflags)
 DIPS_LIBS = $(shell root-config --ldflags) $(shell root-config --libs)
 
-DAMPE_STK_INCLUDE="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/Stk/include"
-#DAMPE_LIBS="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/libDmpEvent.so"
+DAMPE_INCLUDE="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/include"
+DAMPE_LIB="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/"
 
 S_DIR  = $(TOP)/source/
 S_INC  = $(TOP)/include/
@@ -40,7 +40,7 @@ SUB_DIRS := $(subst $(S_DIR)/,,$(SUB_DIRS))
 # C FLAGS
 C_FLAGS = -fPIC -D_FORCE_INLINES
 # CPP FLAGS
-CC_FLAGS = -std=c++11 -I$(S_INC) -I$(DAMPE_STK_INCLUDE)
+CC_FLAGS = -std=c++11 -I$(S_INC)
 # RELEASE_FLAGS
 RELEASE_FLAGS = -O3
 # DEBUG_FLAGS
@@ -49,8 +49,8 @@ DEBUG_FLAGS = -g -D_DEBUG -Wall -Wno-unknown-pragmas
 LDFLAGS :=
 #add dips
 ifneq ($(DIPS_INCLUDE),)
-	CC_FLAGS+= -I$(DIPS_INCLUDE) 
-	LDFLAGS += $(DIPS_LIBS)
+	CC_FLAGS+= -I$(DIPS_INCLUDE) -I$(DAMPE_INCLUDE)
+	LDFLAGS += $(DIPS_LIBS) -L$(DAMPE_LIB) -lDmpEvent
 endif
 ####################################################
 # Flags by OS

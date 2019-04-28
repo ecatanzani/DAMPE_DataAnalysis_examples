@@ -11,13 +11,14 @@
 #include "TTree.h"
 #include "TSystem.h"
 #include "TClonesArray.h"
+#include "TChainIndex.h"
 
 const std::string dampeEvtLib="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/libDmpEvent.so";
 //const string dampeEvtLib="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/libDmpEvent.so";
 
 //// Data Analysis functions
 
-void getTracks(const std::string inputFilePath);
+extern void getTracks(const std::string inputFilePath);
 
 
 

@@ -19,9 +19,9 @@ void getTracks(const std::string inputFilePath)
     DmpStkEventMetadata* stkMetadata = new DmpStkEventMetadata();
     TClonesArray* stkladderadc = new TClonesArray("DmpStkLadderAdc");
    
-   dataTree->SetBranchAddress("StkClusterCollection",&stkclusters);
-   dataTree->SetBranchAddress("DmpStkEventMetadata", &stkMetadata);
-   dataTree->SetBranchAddress("DmpStkLadderAdcCollection", &stkladderadc);
+    dataTree->SetBranchAddress("StkClusterCollection",&stkclusters);
+    dataTree->SetBranchAddress("DmpStkEventMetadata", &stkMetadata);
+    dataTree->SetBranchAddress("DmpStkLadderAdcCollection", &stkladderadc);
 
     // Check if STK tracks collection exists 
     bool fStkKalmanTracksFound = false;
@@ -31,5 +31,5 @@ void getTracks(const std::string inputFilePath)
             fStkKalmanTracksFound = true;
             break;
         }
-
+    
 }
