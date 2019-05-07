@@ -19,18 +19,27 @@ int main(int argc,char* argv[])
         exit(100);
     }
     else if(argc==2)
-        dataFile = argv[2];
+        dataFile = argv[1];
     else
     {
-        configFile = argv[2];
-        dataFile = argv[3];
+        configFile = argv[1];
+        dataFile = argv[2];
     }
-    
+
+    if(verbosity)
+    {
+        std::cout << "\n\nSelected data file: " << dataFile << std::endl;
+        std::cout << "Selected config file: " << configFile << std::endl;
+    }
+
     readConfigFile(
                     configFile,
                     verbosity,
                     analysis
                   );
+
+    if(analysis[0])
+        getTracks(dataFile);
 
     return 0;
 
