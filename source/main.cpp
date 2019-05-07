@@ -42,6 +42,8 @@ int main(int argc,char* argv[])
 
     if(analysis[0])
         getTracks(dataFile,verbosity);
+    else if(analysis[1])
+        getBGOdata(dataFile,verbosity);
 
     return 0;
 
