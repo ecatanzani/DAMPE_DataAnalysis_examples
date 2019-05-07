@@ -1,0 +1,12 @@
+################ Data Analysis configuration file ################
+
+##### Software parameters
+
+verbose True
+
+##### Analysis functions
+
+trackerAnalysis True
+BGOAnalysis Ttue
+
+##### Analysis parameters
