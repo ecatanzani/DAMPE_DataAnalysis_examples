@@ -26,20 +26,22 @@ int main(int argc,char* argv[])
         dataFile = argv[2];
     }
 
-    if(verbosity)
-    {
-        std::cout << "\n\nSelected data file: " << dataFile << std::endl;
-        std::cout << "Selected config file: " << configFile << std::endl;
-    }
-
     readConfigFile(
                     configFile,
                     verbosity,
                     analysis
                   );
 
+    if(verbosity)
+    {   
+        std::cout << "\n ************************ Data Analysis params ************************\n\n";
+        std::cout << "Selected data file: " << dataFile << std::endl;
+        std::cout << "Selected config file: " << configFile;
+        std:: cout << "\n\n *************************************************************************** \n\n";
+    }
+
     if(analysis[0])
-        getTracks(dataFile);
+        getTracks(dataFile,verbosity);
 
     return 0;
 

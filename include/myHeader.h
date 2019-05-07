@@ -20,7 +20,7 @@ const std::string dampeEvtLib="/storage/gpfs_data/dampe/users/ecatanzani/myRepos
 
 //// Data Analysis functions
 
-extern void getTracks(const std::string inputFilePath);
+extern void getTracks(const std::string inputFilePath, const bool verbosity);
 extern void readConfigFile(
                             const std::string configFile,
                             bool &verbosity,

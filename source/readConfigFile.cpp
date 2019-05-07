@@ -18,17 +18,17 @@ void readConfigFile(
     std::istringstream input_stream(input_string);
     while(input_stream>>tmp_str)
     {
-        if(strcmp(tmp_str.c_str(),"verbose"))
+        if(!strcmp(tmp_str.c_str(),"verbose"))
         {
             input_stream>>tmp_str;
             verbosity = tmp_str == "True" ? true : false;
         }
-        if(strcmp(tmp_str.c_str(),"trackerAnalysis"))
+        if(!strcmp(tmp_str.c_str(),"trackerAnalysis"))
         {
             input_stream>>tmp_str;
             analysis[0] = tmp_str == "True" ? true : false;
         }        
-        if(strcmp(tmp_str.c_str(),"BGOAnalysis"))
+        if(!strcmp(tmp_str.c_str(),"BGOAnalysis"))
         {
             input_stream>>tmp_str;
             analysis[1] = tmp_str == "True" ? true : false;
