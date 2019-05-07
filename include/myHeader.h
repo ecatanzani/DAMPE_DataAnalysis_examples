@@ -22,6 +22,7 @@ const std::string dampeEvtLib="/storage/gpfs_data/dampe/users/ecatanzani/myRepos
 
 extern void getTracks(const std::string inputFilePath, const bool verbosity);
 extern void getBGOdata(const std::string inputFilePath,const bool verbosity);
+extern void getAncillarydata(const std::string inputFilePath,const bool verbosity);
 
 extern void readConfigFile(
                             const std::string configFile,

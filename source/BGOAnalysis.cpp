@@ -16,10 +16,11 @@ void getBGOdata(const std::string inputFilePath,const bool verbosity)
         exit(100);
     }
 
+    TTree* dataTree = (TTree*) dataFile->Get("CollectionTree");
+
     // Register STK collections
     DmpStkEventMetadata* stkMetadata = new DmpStkEventMetadata();
-
-    TTree* dataTree = (TTree*) dataFile->Get("CollectionTree");
+    dataTree->SetBranchAddress("DmpStkEventMetadata", &stkMetadata);
 
     // Register BGO constainer
     DmpEvtBgoHits* bgohits  = new  DmpEvtBgoHits();
@@ -44,6 +45,7 @@ void getBGOdata(const std::string inputFilePath,const bool verbosity)
         // Get BGO energy and direction
         if(verbosity)
             printf("BGO total energy = %f\n", bgorec->GetTotalEnergy());
+        
         // BGO trajectory 
         double x = bgorec->GetTrajectoryLocation2D().x();
         double y = bgorec->GetTrajectoryLocation2D().y();

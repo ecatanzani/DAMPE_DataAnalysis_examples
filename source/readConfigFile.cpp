@@ -33,5 +33,10 @@ void readConfigFile(
             input_stream>>tmp_str;
             analysis[1] = tmp_str == "True" ? true : false;
         }
+        if(!strcmp(tmp_str.c_str(),"ancillaryAnalysis"))
+        {
+            input_stream>>tmp_str;
+            analysis[2] = tmp_str == "True" ? true : false;
+        }
     }
 }

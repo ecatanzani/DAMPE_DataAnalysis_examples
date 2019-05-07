@@ -4,8 +4,19 @@ int main(int argc,char* argv[])
 {
     std::string dataFile;
     std::string configFile = "config.txt";
+    
     std::vector<bool> analysis;
     analysis.resize(2);
+
+    /*
+        Analysis vector
+
+        [0] "True" --> STK analysis
+        [1] "True" --> BGO analysis
+        [2] "True" --> Ancillary analysis
+
+    */
+
 
     ////// Data Analysis Software Parameters
 
@@ -41,9 +52,24 @@ int main(int argc,char* argv[])
     }
 
     if(analysis[0])
+    {
+        if(verbosity)
+            std::cout << "\n\n ***** STK Analysis ***** \n\n";
         getTracks(dataFile,verbosity);
+    }
     else if(analysis[1])
+    {
+        if(verbosity)
+            std::cout << "\n\n ***** BGO Analysis ***** \n\n";
         getBGOdata(dataFile,verbosity);
+    }
+    else if(analysis[2])
+    {
+        if(verbosity)
+            std::cout << "\n\n ***** ancillary Analysis ***** \n\n";
+        getAncillarydata(dataFile,verbosity);
+    }
+
 
     return 0;
 

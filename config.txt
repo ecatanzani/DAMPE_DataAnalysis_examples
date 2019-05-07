@@ -6,7 +6,8 @@ verbose True
 
 ##### Analysis functions
 
-trackerAnalysis True
-BGOAnalysis Ttue
+trackerAnalysis False
+BGOAnalysis False
+ancillaryAnalysis True
 
 ##### Analysis parameters
