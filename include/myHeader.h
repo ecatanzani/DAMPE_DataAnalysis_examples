@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <vector>
 #include <string.h>
+#include <fstream>
+#include <sstream>
 
 #include "TFile.h"
 #include "TTree.h"
@@ -19,7 +21,11 @@ const std::string dampeEvtLib="/storage/gpfs_data/dampe/users/ecatanzani/myRepos
 //// Data Analysis functions
 
 extern void getTracks(const std::string inputFilePath);
-
+extern void readConfigFile(
+                            const std::string configFile,
+                            bool &verbosity,
+                            std::vector<bool> &analysis
+                          );
 
 
 #endif
