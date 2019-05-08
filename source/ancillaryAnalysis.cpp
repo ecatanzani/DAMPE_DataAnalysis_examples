@@ -6,7 +6,11 @@
 #include "AncillaryEvent.hh"
 #include "AncillaryEventIons.hh"
 
-void getAncillarydata(const std::string inputFilePath,const bool verbosity)
+void getAncillarydata(
+                        const std::string inputFilePath,
+                        const std::string outPrefix,
+                        const bool verbosity
+                    )
 {
     gSystem->Load(dampeEvtLib.c_str());
 
@@ -53,6 +57,12 @@ void getAncillarydata(const std::string inputFilePath,const bool verbosity)
             // etc.
             // For more information see http://dpnc.unige.ch/SVNDAMPE/DAMPE/DmpSoftware/trunk/Event/Ams/include/AncillaryEventIons.hh
         }
-   }
+    }
+
+    //// Cleaning pointers
+
+    stkMetadata->Delete();
+    stkladderadc->Delete();
+    ancevent->Delete();
 
 }

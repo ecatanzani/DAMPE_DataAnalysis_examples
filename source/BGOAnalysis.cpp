@@ -5,7 +5,11 @@
 
 #include "DmpStkEventMetadata.h"
 
-void getBGOdata(const std::string inputFilePath,const bool verbosity)
+void getBGOdata(
+                    const std::string inputFilePath,
+                    const std::string outPrefix,
+                    const bool verbosity
+                )
 {
     gSystem->Load(dampeEvtLib.c_str());
 
@@ -30,6 +34,22 @@ void getBGOdata(const std::string inputFilePath,const bool verbosity)
     DmpEvtBgoRec* bgorec  = new  DmpEvtBgoRec();
     dataTree->SetBranchAddress("DmpEvtBgoRec",&bgorec);
 
+    //// Histos
+
+    TH1D trajectoryBGOX("trajectoryBGOX","X trajectory BGO",1000,0,100);
+    TH1D trajectoryBGOY("trajectoryBGOY","Y trajectory BGO",1000,0,100);
+    TH1D trajectoryBGOZ("trajectoryBGOZ","Z trajectory BGO",1000,0,100);
+
+    TH1D BGOslopeXZ("BGOslopeXZ","slope BG XZ",1000,0,100);
+    TH1D BGOslopeYZ("BGOslopeXZ","slope BG YZ",1000,0,100);
+
+    TH1D BGOhitsX("BGOhitsX","BGO hits X",1000,0,500);
+    TH1D BGOhitsY("BGOhitsY","BGO hits Y",1000,0,500);
+    TH1D BGOhitsZ("BGOhitsZ","BGO hits Z",1000,0,500);
+
+    TH1D recEnergy("recEnergy","BGO rec Energy",1000,0,10000);
+    TH1D hitsEnergy("hitsEnergy","BGO hits Energy",1000,0,10000);
+
     // Event LOOP
     for(int entry=0; entry<dataTree->GetEntries(); entry++)
     {
@@ -53,6 +73,15 @@ void getBGOdata(const std::string inputFilePath,const bool verbosity)
         double incl_x = bgorec->GetSlopeXZ();
         double incl_y = bgorec->GetSlopeYZ();
 
+        trajectoryBGOX.Fill(x);
+        trajectoryBGOY.Fill(y);
+        trajectoryBGOZ.Fill(z);
+
+        BGOslopeXZ.Fill(incl_x);
+        BGOslopeYZ.Fill(incl_y);
+
+        recEnergy.Fill(bgorec->GetTotalEnergy());
+
         // Loop over the BGO (PSD) hits
         for(int i=0; i<bgohits->fEnergy.size(); i++)
         {
@@ -65,7 +94,56 @@ void getBGOdata(const std::string inputFilePath,const bool verbosity)
                 printf("   hit z=%f\n", bgohits->GetHitZ(i));
                 // etc.
                 // For more details on BGO event class see http://dpnc.unige.ch/SVNDAMPE/DAMPE/DmpSoftware/trunk/Event/Bgo/include/DmpEvtBgoHits.h
+            
+                hitsEnergy.Fill(bgohits->fEnergy[i]);
+
+                BGOhitsX.Fill(bgohits->GetHitX(i));
+                BGOhitsY.Fill(bgohits->GetHitY(i));
+                BGOhitsZ.Fill(bgohits->GetHitZ(i));
             }
         } 
     }
+
+    //// Closing data file
+
+    dataFile->Close();
+
+    //// Opening input file
+
+    TString outPathFile(outPrefix);
+    outPathFile += "BGOAnalysis.root";
+
+    TFile outFile(outPathFile.Data(),"WRITE");
+    if(outFile.IsZombie())
+    {
+        std::cerr << "\n\nError writing output file in BGO analysis. outPath is " << outPathFile << "\n\n";
+        exit(100);
+    }
+
+    //// Writing to file
+
+    trajectoryBGOX.Write();
+    trajectoryBGOY.Write();
+    trajectoryBGOZ.Write();
+
+    BGOslopeXZ.Write();
+    BGOslopeYZ.Write();
+
+    BGOhitsX.Write();
+    BGOhitsY.Write();
+    BGOhitsZ.Write();
+
+    recEnergy.Write();
+    hitsEnergy.Write();
+
+    //// Closing output file
+
+    outFile.Close();
+
+    //// Cleaning pointers
+
+    stkMetadata->Delete();
+    bgohits->Delete();
+    bgorec->Delete();
+    
 }

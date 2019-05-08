@@ -3,6 +3,7 @@
 int main(int argc,char* argv[])
 {
     std::string dataFile;
+    std::string outPrefix;
     std::string configFile = "config.txt";
     
     std::vector<bool> analysis;
@@ -23,17 +24,21 @@ int main(int argc,char* argv[])
 
     ////// 
 
-    if(argc<2)
+    if(argc<3)
     {
-        std::cout << "\n\nUsage: ./exmplAnalysis (path_to_ext_config_file) path_to_data_file" << std::endl << std::endl;
+        std::cout << "\n\nUsage: ./exmplAnalysis (path_to_ext_config_file) path_to_data_file prefix_out_file" << std::endl << std::endl;
         exit(100);
     }
-    else if(argc==2)
+    else if(argc==3)
+    {
         dataFile = argv[1];
+        outPrefix = argv[2];
+    }
     else
     {
         configFile = argv[1];
         dataFile = argv[2];
+        outPrefix = argv[3];
     }
 
     readConfigFile(
@@ -54,19 +59,19 @@ int main(int argc,char* argv[])
     {
         if(verbosity)
             std::cout << "\n\n ***** STK Analysis ***** \n\n";
-        getTracks(dataFile,verbosity);
+        getTracks(dataFile,outPrefix,verbosity);
     }
     else if(analysis.at(1))
     {
         if(verbosity)
             std::cout << "\n\n ***** BGO Analysis ***** \n\n";
-        getBGOdata(dataFile,verbosity);
+        getBGOdata(dataFile,outPrefix,verbosity);
     }
     else if(analysis.at(2))
     {
         if(verbosity)
             std::cout << "\n\n ***** ancillary Analysis ***** \n\n";
-        getAncillarydata(dataFile,verbosity);
+        getAncillarydata(dataFile,outPrefix,verbosity);
     }
 
 
