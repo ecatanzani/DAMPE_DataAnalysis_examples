@@ -6,7 +6,6 @@ int main(int argc,char* argv[])
     std::string configFile = "config.txt";
     
     std::vector<bool> analysis;
-    analysis.resize(2);
 
     /*
         Analysis vector
@@ -51,19 +50,19 @@ int main(int argc,char* argv[])
         std:: cout << "\n\n *************************************************************************** \n\n";
     }
 
-    if(analysis[0])
+    if(analysis.at(0))
     {
         if(verbosity)
             std::cout << "\n\n ***** STK Analysis ***** \n\n";
         getTracks(dataFile,verbosity);
     }
-    else if(analysis[1])
+    else if(analysis.at(1))
     {
         if(verbosity)
             std::cout << "\n\n ***** BGO Analysis ***** \n\n";
         getBGOdata(dataFile,verbosity);
     }
-    else if(analysis[2])
+    else if(analysis.at(2))
     {
         if(verbosity)
             std::cout << "\n\n ***** ancillary Analysis ***** \n\n";
