@@ -8,9 +8,13 @@
 void getBGOdata(
                     const std::string inputFilePath,
                     const std::string outPrefix,
-                    const bool verbosity
+                    const bool verbosity,
+                    const ULong64_t sDFactor
                 )
 {
+    ULong64_t totEvents = 0;
+    double pctgEvt = 0;
+
     gSystem->Load(dampeEvtLib.c_str());
 
     TFile* dataFile = TFile::Open(inputFilePath.c_str());
@@ -21,6 +25,10 @@ void getBGOdata(
     }
 
     TTree* dataTree = (TTree*) dataFile->Get("CollectionTree");
+
+    totEvents = (ULong64_t)dataFile->Get("CollectionTree")/sDFactor;
+    if(verbosity)
+        std::cout << "\n" << totEvents << " will be read from data input file\n";
 
     // Register STK collections
     DmpStkEventMetadata* stkMetadata = new DmpStkEventMetadata();
@@ -41,7 +49,7 @@ void getBGOdata(
     TH1D trajectoryBGOZ("trajectoryBGOZ","Z trajectory BGO",1000,0,100);
 
     TH1D BGOslopeXZ("BGOslopeXZ","slope BG XZ",1000,0,100);
-    TH1D BGOslopeYZ("BGOslopeXZ","slope BG YZ",1000,0,100);
+    TH1D BGOslopeYZ("BGOslopeYZ","slope BG YZ",1000,0,100);
 
     TH1D BGOhitsX("BGOhitsX","BGO hits X",1000,0,500);
     TH1D BGOhitsY("BGOhitsY","BGO hits Y",1000,0,500);
@@ -51,10 +59,11 @@ void getBGOdata(
     TH1D hitsEnergy("hitsEnergy","BGO hits Energy",1000,0,10000);
 
     // Event LOOP
-    for(int entry=0; entry<dataTree->GetEntries(); entry++)
+    for(int entry=0; entry<totEvents; ++entry)
     {
-        //for(int entry=0; entry<10; entry++){
         dataTree->GetEntry(entry);
+        pctgEvt = ((Double_t)(entry+1)/totEvents)*100;
+        pBar(pctgEvt);
 
         // STK metadata
         if(verbosity)
@@ -83,7 +92,7 @@ void getBGOdata(
         recEnergy.Fill(bgorec->GetTotalEnergy());
 
         // Loop over the BGO (PSD) hits
-        for(int i=0; i<bgohits->fEnergy.size(); i++)
+        for(int i=0; i<bgohits->fEnergy.size(); ++i)
         {
             if(verbosity)
             {
@@ -111,9 +120,9 @@ void getBGOdata(
     //// Opening input file
 
     TString outPathFile(outPrefix);
-    outPathFile += "BGOAnalysis.root";
+    outPathFile += "/BGOAnalysis.root";
 
-    TFile outFile(outPathFile.Data(),"WRITE");
+    TFile outFile(outPathFile.Data(),"RECREATE");
     if(outFile.IsZombie())
     {
         std::cerr << "\n\nError writing output file in BGO analysis. outPath is " << outPathFile << "\n\n";

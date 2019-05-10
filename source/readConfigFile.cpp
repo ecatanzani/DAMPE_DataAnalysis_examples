@@ -3,7 +3,8 @@
 void readConfigFile(
                         const std::string configFile,
                         bool &verbosity,
-                        std::vector<bool> &analysis
+                        std::vector<bool> &analysis,
+                        ULong64_t &sDFactor
                    )
 {
     std::ifstream input_file(configFile.c_str());
@@ -31,6 +32,11 @@ void readConfigFile(
         {
             input_stream>>tmp_str;
             analysis.push_back(tmp_str == "True" ? true : false);
+        }
+        if(!strcmp(tmp_str.c_str(),"inputDataScalingFactor"))
+        {
+            input_stream>>tmp_str;
+            sDFactor = strtoul(tmp_str.c_str(), NULL, 0);
         }
 
     }

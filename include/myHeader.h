@@ -26,30 +26,38 @@
 const std::string dampeEvtLib="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/libDmpEvent.so";
 //const string dampeEvtLib="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysis/Event/libDmpEvent.so";
 
+//// pBar library
+
+#include "progHeader.h"
+
 //// Data Analysis functions
 
 extern void getTracks(
                         const std::string inputFilePath,
                         const std::string outPrefix, 
-                        const bool verbosity
+                        const bool verbosity,
+                        const ULong64_t sDFactor
                       );
 
 extern void getBGOdata(
                         const std::string inputFilePath,
                         const std::string outPrefix,
-                        const bool verbosity
+                        const bool verbosity,
+                        const ULong64_t sDFactor
                       );
 
 extern void getAncillarydata(
                               const std::string inputFilePath,
                               const std::string outPrefix,
-                              const bool verbosity
+                              const bool verbosity,
+                              const ULong64_t sDFactor
                             );
 
 extern void readConfigFile(
                             const std::string configFile,
                             bool &verbosity,
-                            std::vector<bool> &analysis
+                            std::vector<bool> &analysis,
+                            ULong64_t &sDFactor
                           );
 
 

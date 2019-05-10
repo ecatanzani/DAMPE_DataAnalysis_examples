@@ -5,7 +5,8 @@ int main(int argc,char* argv[])
     std::string dataFile;
     std::string outPrefix;
     std::string configFile = "config.txt";
-    
+    ULong64_t sDFactor = 1;
+
     std::vector<bool> analysis;
 
     /*
@@ -44,7 +45,8 @@ int main(int argc,char* argv[])
     readConfigFile(
                     configFile,
                     verbosity,
-                    analysis
+                    analysis,
+                    sDFactor
                   );
 
     if(verbosity)
@@ -54,26 +56,42 @@ int main(int argc,char* argv[])
         std::cout << "Selected config file: " << configFile;
         std:: cout << "\n\n *************************************************************************** \n\n";
     }
+    if(sDFactor!=1)
+        std::cout << "\nData scaling factor applied: " << sDFactor;
 
-    if(analysis.at(0))
+    for(int aIdx=0; aIdx<analysis.size(); ++aIdx)
     {
-        if(verbosity)
+        if(analysis.at(aIdx) == true && aIdx == 0)
+        {
             std::cout << "\n\n ***** STK Analysis ***** \n\n";
-        getTracks(dataFile,outPrefix,verbosity);
-    }
-    else if(analysis.at(1))
-    {
-        if(verbosity)
+            getTracks(
+                        dataFile,
+                        outPrefix,
+                        verbosity,
+                        sDFactor
+                    );
+        }
+        else if(analysis.at(aIdx) == true && aIdx == 1)
+        {
             std::cout << "\n\n ***** BGO Analysis ***** \n\n";
-        getBGOdata(dataFile,outPrefix,verbosity);
-    }
-    else if(analysis.at(2))
-    {
-        if(verbosity)
+            getBGOdata(
+                        dataFile,
+                        outPrefix,
+                        verbosity,
+                        sDFactor
+                    );
+        }
+        else if(analysis.at(aIdx) == true && aIdx == 2)
+        {
             std::cout << "\n\n ***** ancillary Analysis ***** \n\n";
-        getAncillarydata(dataFile,outPrefix,verbosity);
+            getAncillarydata(
+                                dataFile,
+                                outPrefix,
+                                verbosity,
+                                sDFactor
+                            );
+        }
     }
-
 
     return 0;
 

@@ -23,6 +23,9 @@ DAMPE_LIB="/storage/gpfs_data/dampe/users/ecatanzani/myRepos/DAMPE/DAMPE_Analysi
 S_DIR  = $(TOP)/source/
 S_INC  = $(TOP)/include/
 
+PLIB_INCLUDE = $(TOP)/ProgressBar/include
+PLIB_SOURCE = $(TOP)/ProgressBar/source
+
 DEBUG_DIR    = Debug/obj
 RELEASE_DIR  = Release/obj
 DEBUG_PROG   = Debug/exmplAnalysis
@@ -49,7 +52,7 @@ DEBUG_FLAGS = -g -D_DEBUG -Wall -Wno-unknown-pragmas
 LDFLAGS :=
 #add dips
 ifneq ($(DIPS_INCLUDE),)
-	CC_FLAGS+= -I$(DIPS_INCLUDE) -I$(DAMPE_INCLUDE)
+	CC_FLAGS+= -I$(DIPS_INCLUDE) -I$(DAMPE_INCLUDE) -I$(PLIB_INCLUDE)
 	LDFLAGS += $(DIPS_LIBS) -L$(DAMPE_LIB) -lDmpEvent
 endif
 ####################################################
@@ -64,7 +67,8 @@ endif
 # All source files
 ALL_SOURCE_FILES := $(wildcard $(S_DIR)/*.cpp)\
 					$(wildcard $(S_DIR)/**/*.cpp)\
-					$(wildcard $(S_DIR)/**/**/*.cpp)	
+					$(wildcard $(S_DIR)/**/**/*.cpp)\
+					$(wildcard $(PLIB_SOURCE)/*.cpp)
 
 ####################################################
 # Object files
@@ -106,15 +110,15 @@ COLOR_MAGENTA = 5
 COLOR_CYAN = 6
 COLOR_WHITE = 7
 
-all: directories show_debug_flags debug release clean
+all: directories show_debug_flags debug release clean clean_submodules
 
 directories: debug_make_dirs release_make_dirs
 
-rebuild: clean_all directories debug release clean
+rebuild: clean_all clean_submodules directories debug release clean clean_submodules
 
-rebuild_debug: clean_all_debug debug clean_debug
+rebuild_debug: clean_all_debug clean_submodules debug clean_debug clean_submodules
 
-rebuild_release: clean_all_release release clean_release
+rebuild_release: clean_all_release clean_submodules release clean_release clean_submodules
 
 debug: directories show_debug_flags $(SOURCE_DEBUG_OBJS) $(TEST_SOURCE_DEBUG_OBJS)
 	$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(SOURCE_DEBUG_OBJS) $(LDFLAGS) -o $(O_DEBUG_PROG)
@@ -155,8 +159,8 @@ $(SOURCE_RELEASE_OBJS):
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) -c $(subst $(RELEASE_DIR),$(S_DIR),$(@:.o=.cpp)) -o $@
 
 # Clean
-clean: clean_debug clean_release
-clean_all: clean_all_debug clean_all_release
+clean: clean_debug clean_release clean_submodules
+clean_all: clean_all_debug clean_all_release clean_submodules
 
 clean_debug:
 	$(call colorecho,$(COLOR_MAGENTA),"[ Delete debug obj files ]")
@@ -177,3 +181,7 @@ clean_all_release:
 	@rm -f -R $(O_RELEASE_DIR)
 	$(call colorecho,$(COLOR_MAGENTA),"[ Delete release executable files ]")
 	@rm -f -R $(O_RELEASE_PROG)
+
+clean_submodules:
+	$(call colorecho,$(COLOR_MAGENTA),"[ Delete submodules obj files ]")
+	@rm -f $(TOP)/ProgressBar/source/*.o

@@ -2,12 +2,14 @@
 
 ##### Software parameters
 
-verbose True
+verbose False
 
 ##### Analysis functions
 
-trackerAnalysis False
-BGOAnalysis False
+trackerAnalysis True
+BGOAnalysis True
 ancillaryAnalysis True
 
 ##### Analysis parameters
+
+inputDataScalingFactor   1000

@@ -10,9 +10,13 @@
 void getTracks(
                 const std::string inputFilePath,
                 const std::string outPrefix, 
-                const bool verbosity
+                const bool verbosity,
+                const ULong64_t sDFactor
             )
 {
+    ULong64_t totEvents = 0;
+    double pctgEvt = 0;
+
     gSystem->Load(dampeEvtLib.c_str());
 
     TFile* dataFile = TFile::Open(inputFilePath.c_str());
@@ -23,6 +27,10 @@ void getTracks(
     }
 
     TTree* dataTree = (TTree*) dataFile->Get("CollectionTree");
+
+    totEvents = (ULong64_t)dataFile->Get("CollectionTree")/sDFactor;
+    if(verbosity)
+        std::cout << "\n" << totEvents << " will be read from data input file\n";
 
     // Register STK collections
     TClonesArray* stkclusters = new TClonesArray("DmpStkSiCluster");
@@ -66,18 +74,6 @@ void getTracks(
     TH1D cog("cog","Center of Gravity",1000,0,800);
     TH1D ladderID("ladderID","ladder ID",1000,0,1000);
 
-    TH1D* adcChannel[stkladderadc->GetLast()+1];
-    for(int idx = 0; idx < stkladderadc->GetLast()+1; ++idx)
-    {   
-        TString histoName="ADCchannel_";
-        TString histoDscp="ADC channel ";
-
-        histoName += idx;
-        histoDscp += idx;
-
-        adcChannel[idx] = new TH1D(histoName,histoDscp,1000,0,100);
-    }
-
     //// Single TRB
 
     TH1D sTRBtotalADCcounts("sTRBtotalADCcounts","sTRB total ADC counts",1000,0,100);
@@ -100,21 +96,22 @@ void getTracks(
 
     TH1D trackNpoints("trackNpoints","track N points",100,0,10);
 
-
     ////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////
 
     // Event LOOP
-    for(int entry=0; entry<dataTree->GetEntries(); entry++)
+    for(int entry=0; entry<totEvents; ++entry)
     {
         dataTree->GetEntry(entry);
-        
+        pctgEvt = ((Double_t)(entry+1)/totEvents)*100;
+        pBar(pctgEvt);
+
         // STK metadata
         if(verbosity)
             printf("\nSTK data mode = %d\n", stkMetadata->fRunMode );   
         
         // Loop over STK clusters in event
-        for(int i=0; i<stkclusters->GetLast()+1; i++)
+        for(int i=0; i<stkclusters->GetLast()+1; ++i)
         {
             DmpStkSiCluster* cluster = (DmpStkSiCluster*)stkclusters->ConstructedAt(i);
             if(verbosity)
@@ -153,7 +150,6 @@ void getTracks(
                 if(verbosity)
                     std::cout << "\nladder ID: " << ladderid << "ADC channel " << idx << adc; 
             }
-            adcChannel[idx]->Fill(adc);
         }
     
         // Loop over STK tracks (if present)
@@ -281,9 +277,9 @@ void getTracks(
     //// Opening input file
 
     TString outPathFile(outPrefix);
-    outPathFile += "STKAnalysis.root";
+    outPathFile += "/STKAnalysis.root";
 
-    TFile outFile(outPathFile.Data(),"WRITE");
+    TFile outFile(outPathFile.Data(),"RECREATE");
     if(outFile.IsZombie())
     {
         std::cerr << "\n\nError writing output file in STK analysis. outPath is " << outPathFile << "\n\n";
@@ -301,9 +297,6 @@ void getTracks(
     cog.Write();
     ladderID.Write();
 
-    for(int idx = 0; idx < stkladderadc->GetLast()+1; ++idx)
-        adcChannel[idx]->Write();
-    
     sTRBtotalADCcounts.Write();
     sTRBclusterStrip.Write();
     sTRBfStripSignal.Write();
@@ -330,8 +323,5 @@ void getTracks(
     stktracks->Delete(); 
     stkclusters_stktrb->Delete();
     evtheader->Delete();
-
-    for(int idx = 0; idx < stkladderadc->GetLast()+1; ++idx)
-        adcChannel[idx]->Delete();
 
 }
