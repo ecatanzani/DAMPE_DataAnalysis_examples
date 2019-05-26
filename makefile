@@ -67,14 +67,20 @@ endif
 # All source files
 ALL_SOURCE_FILES := $(wildcard $(S_DIR)/*.cpp)\
 					$(wildcard $(S_DIR)/**/*.cpp)\
-					$(wildcard $(S_DIR)/**/**/*.cpp)\
-					$(wildcard $(PLIB_SOURCE)/*.cpp)
+					$(wildcard $(S_DIR)/**/**/*.cpp)
+
+DEPENDENCY_FILES := $(wildcard $(PLIB_SOURCE)/*.cpp)
 
 ####################################################
 # Object files
 SOURCE_FILES = $(filter-out $(FILTER), $(ALL_SOURCE_FILES))
 SOURCE_DEBUG_OBJS = $(subst $(S_DIR),$(DEBUG_DIR),$(subst .cpp,.o,$(SOURCE_FILES)))
 SOURCE_RELEASE_OBJS = $(subst $(S_DIR),$(RELEASE_DIR),$(subst .cpp,.o,$(SOURCE_FILES)))
+
+
+SOURCE_DEPENDENCY_FILES = $(filter-out $(FILTER), $(DEPENDENCY_FILES))
+SOURCE_DEBUG_DEPENDENCY_OBJS = $(subst $(S_DIR),$(DEBUG_DIR),$(subst .cpp,.o,$(SOURCE_DEPENDENCY_FILES)))
+SOURCE_RELEASE_DEPENDENCY_OBJS = $(subst $(S_DIR),$(RELEASE_DIR),$(subst .cpp,.o,$(SOURCE_DEPENDENCY_FILES)))
 
 ####################################################
 # Output dirs
@@ -110,21 +116,21 @@ COLOR_MAGENTA = 5
 COLOR_CYAN = 6
 COLOR_WHITE = 7
 
-all: directories show_debug_flags debug release clean clean_submodules
+all: directories show_debug_flags debug release clean
 
 directories: debug_make_dirs release_make_dirs
 
-rebuild: clean_all clean_submodules directories debug release clean clean_submodules
+rebuild: clean_all directories debug release clean
 
-rebuild_debug: clean_all_debug clean_submodules debug clean_debug clean_submodules
+rebuild_debug: clean_all_debug debug clean_debug
 
-rebuild_release: clean_all_release clean_submodules release clean_release clean_submodules
+rebuild_release: clean_all_release release clean_release
 
-debug: directories show_debug_flags $(SOURCE_DEBUG_OBJS) $(TEST_SOURCE_DEBUG_OBJS)
-	$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(SOURCE_DEBUG_OBJS) $(LDFLAGS) -o $(O_DEBUG_PROG)
+debug: directories show_debug_flags $(SOURCE_DEBUG_OBJS) $(SOURCE_DEBUG_DEPENDENCY_OBJS) $(TEST_SOURCE_DEBUG_OBJS)
+	$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(SOURCE_DEBUG_OBJS) $(SOURCE_DEBUG_DEPENDENCY_OBJS) $(LDFLAGS) -o $(O_DEBUG_PROG)
 
-release: directories show_release_flags $(SOURCE_RELEASE_OBJS) $(TEST_SOURCE_RELEASE_OBJS)
-	$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(SOURCE_RELEASE_OBJS) $(LDFLAGS) -o $(O_RELEASE_PROG)
+release: directories show_release_flags $(SOURCE_RELEASE_OBJS) $(SOURCE_RELEASE_DEPENDENCY_OBJS) $(TEST_SOURCE_RELEASE_OBJS)
+	$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(SOURCE_RELEASE_OBJS) $(SOURCE_RELEASE_DEPENDENCY_OBJS) $(LDFLAGS) -o $(O_RELEASE_PROG)
 
 # makedir
 debug_make_dirs:
@@ -152,15 +158,23 @@ $(SOURCE_DEBUG_OBJS):
 	$(call colorecho,$(COLOR_GREEN),"[ Make debug object: $(subst $(DEBUG_DIR),,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@)) ]")
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(DEBUG_FLAGS) -c $(subst $(DEBUG_DIR),$(S_DIR),$(@:.o=.cpp)) -o $@
 
+$(SOURCE_DEBUG_DEPENDENCY_OBJS):
+	$(call colorecho,$(COLOR_GREEN),"[ Make debug submodule object: $(subst $(DEBUG_DIR),,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@)) ]")
+	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(DEBUG_FLAGS) -c $(subst $(DEBUG_DIR),$(S_DIR),$(@:.o=.cpp)) -o $@
+
 ##################################################################################################################
 # RELEASE
 $(SOURCE_RELEASE_OBJS):
 	$(call colorecho,$(COLOR_GREEN),"[ Make release object: $(subst $(RELEASE_DIR),,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@)) ]")
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) -c $(subst $(RELEASE_DIR),$(S_DIR),$(@:.o=.cpp)) -o $@
 
+$(SOURCE_RELEASE_DEPENDENCY_OBJS):
+	$(call colorecho,$(COLOR_GREEN),"[ Make release submodule object: $(subst $(RELEASE_DIR),,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@)) ]")
+	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) -c $(subst $(RELEASE_DIR),$(S_DIR),$(@:.o=.cpp)) -o $@
+
 # Clean
-clean: clean_debug clean_release clean_submodules
-clean_all: clean_all_debug clean_all_release clean_submodules
+clean: clean_debug clean_release
+clean_all: clean_all_debug clean_all_release
 
 clean_debug:
 	$(call colorecho,$(COLOR_MAGENTA),"[ Delete debug obj files ]")
@@ -181,7 +195,3 @@ clean_all_release:
 	@rm -f -R $(O_RELEASE_DIR)
 	$(call colorecho,$(COLOR_MAGENTA),"[ Delete release executable files ]")
 	@rm -f -R $(O_RELEASE_PROG)
-
-clean_submodules:
-	$(call colorecho,$(COLOR_MAGENTA),"[ Delete submodules obj files ]")
-	@rm -f $(TOP)/ProgressBar/source/*.o

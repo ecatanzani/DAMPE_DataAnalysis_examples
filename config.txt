@@ -12,4 +12,4 @@ ancillaryAnalysis True
 
 ##### Analysis parameters
 
-inputDataScalingFactor   1000
+inputDataScalingFactor   1
